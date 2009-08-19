@@ -26,22 +26,7 @@ router.post('/posts',function(req, res, next){
 });
 
 router.param('post', function(req,res,next,id){
-<<<<<<< HEAD
-	var query = Post.findBId(id);
 
-	query.exec(function(err, result){
-		if (err){return next(err);}
-		if (!result) { return next(new Error('Can\'t find post'));}
-		req.post= result;
-		next();
-	});
-});
-
-router.get('/post/:posts', function(req, res, next){
-	res.json(req.post);
-	});
-
-=======
 	var query= Post.findById(id);
 
 	query.exec(function(error,result){
@@ -88,9 +73,20 @@ router.param('comment', function(req, res, next, id){
 	query.exec(function(err, result){
 		if(err){next(err);}
 		req.comment= result;
+		next();
 	});
 });
->>>>>>> fb706746babc1aa9cb5cfed424aa81be1753f25b
 
+router.get('/posts/:post/comments/:comment', function(req, res, next){
+	res.json(req.comment);
+});
+
+router.put('/posts/:post/comments/:comment/upvote', function(req, res, next){
+	req.comment.upvote(function(err,result){
+		if(err){next(err);}
+		res.json(result.post);
+
+	});
+});
 
 module.exports = router;
