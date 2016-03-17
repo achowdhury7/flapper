@@ -1,7 +1,6 @@
 var mongoose= require('mongoose');
 
-var PostSchema= new mongoose.schema(
-{
+var PostSchema= new mongoose.Schema({
 	title:String,
 	link: String,
 	upvotes:{type: Number, default:0},
@@ -9,3 +8,4 @@ var PostSchema= new mongoose.schema(
 });
 
 mongoose.model('Post',PostSchema);
+
