@@ -24,4 +24,21 @@ router.post('/posts',function(req, res, next){
 	});
 });
 
+router.param('post', function(req,res,next,id){
+	var query = Post.findBId(id);
+
+	query.exec(function(err, result){
+		if (err){return next(err);}
+		if (!result) { return next(new Error('Can\'t find post'));}
+		req.post= result;
+		next();
+	});
+});
+
+router.get('/post/:posts', function(req, res, next){
+	res.json(req.post);
+	});
+
+
+
 module.exports = router;
