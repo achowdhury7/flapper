@@ -5,7 +5,12 @@ app.config(['$stateProvider','$urlRouterProvider',function($stateProvider,$urlRo
     .state('home', {
       url: '/home',
       templateUrl: '/home.html',
-      controller: 'MainCtrl'
+      controller: 'MainCtrl',
+       resolve: {
+    postPromise: ['posts', function(posts){
+      return posts.getAll();
+        }]
+      }
     })
 
     .state('posts',{
