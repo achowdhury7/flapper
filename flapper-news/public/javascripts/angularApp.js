@@ -39,13 +39,19 @@ function($scope, postFactory){
   }
 });
 
-app.factory('postFactory',function(){
+app.factory('postFactory', ['$http', function($http){
 
   var obj= {
     postList:[]
   };
+
+  obj.getAll= function(){
+    return $http.get('/posts').success(function(data){
+      angular.copy(data, obj.postList);
+    });
+  };
   return obj;
-});
+}]);
 
 app.factory('commentFactory',function(){
 

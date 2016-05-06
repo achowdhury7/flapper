@@ -40,8 +40,11 @@ router.param('post', function(req,res,next,id){
 });
 
 router.get('/posts/:post',function(req,res,next){
-	res.json(req.post);
-});
+	req.post.populate('comments', function(err, result){
+		if(err){next(err);}
+		res.json(req.post);
+	});
+});	
 
 router.put('/posts/:post/upvote', function(req, res, next){
 	req.post.upvote(function(err, result){
@@ -52,7 +55,7 @@ router.put('/posts/:post/upvote', function(req, res, next){
 });
 
 router.get('/posts/:post/comments', function(req,res,next){
-	var comment= Comment.find({'comment.post': req.post}, function(err, result){
+	var comment= Comment.find({post: req.post}, function(err, result){
 		if(err){next(err);}
 		res.json(result);
 	});
@@ -60,10 +63,9 @@ router.get('/posts/:post/comments', function(req,res,next){
 
 router.post('/posts/:post/comments', function(req, res, next){
 	var comment= new Comment(req.body);
-
+	comment.post= req.post;
 	comment.save(function(err, result){
-		if(err){next(err);}
-		comment.post= req.post;
+		if(err){next(err);}		
 		req.post.comments.push(result);
 		req.post.save(function(err,result){
 			if(err){next(err);}
