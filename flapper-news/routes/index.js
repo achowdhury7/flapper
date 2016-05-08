@@ -5,6 +5,10 @@ var Post= mongoose.model('Post');
 var Comment= mongoose.model('Comment');
 
 /* GET home page. */
+router.get('/',function(req, res, next){
+	res.render('index');
+});
+
 router.get('/posts', function(req, res, next) {
 	Post.find(function(err,posts){
 		if (err) {return next(err);}
