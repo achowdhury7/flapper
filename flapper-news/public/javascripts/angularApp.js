@@ -6,10 +6,10 @@ app.config(['$stateProvider','$urlRouterProvider',function($stateProvider,$urlRo
       url: '/home',
       templateUrl: '/home.html',
       controller: 'MainCtrl',
-       resolve: {
-    postPromise: ['posts', function(posts){
-      return posts.getAll();
-        }]
+      resolve: {
+        posts: function(postFactory){
+        return postFactory.getAll();
+        }
       }
     })
 
@@ -22,8 +22,8 @@ app.config(['$stateProvider','$urlRouterProvider',function($stateProvider,$urlRo
   $urlRouterProvider.otherwise('home');
 }]);
 
-app.controller('MainCtrl', 
-function($scope, postFactory){ 
+app.controller('MainCtrl', ['$scope','posts', 'postFactory',
+function($scope, posts, postFactory){ 
   $scope.posts =postFactory.postList; // binding the service to a 'scope' variable, therefore enabling 2-way binding
   $scope.addPost=function(){
   	if ($scope.title && $scope.title != '') {
@@ -42,7 +42,7 @@ function($scope, postFactory){
   $scope.incrementUpvote= function(post){
   	post.upvotes+=1;
   }
-});
+}]);
 
 app.factory('postFactory', ['$http', function($http){
 

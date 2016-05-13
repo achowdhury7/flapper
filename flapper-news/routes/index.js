@@ -5,6 +5,10 @@ var Post= mongoose.model('Post');
 var Comment= mongoose.model('Comment');
 
 /* GET home page. */
+router.get('/',function(req, res, next){
+	res.render('index');
+});
+
 router.get('/posts', function(req, res, next) {
 	Post.find(function(err,posts){
 		if (err) {return next(err);}
@@ -26,6 +30,7 @@ router.post('/posts',function(req, res, next){
 });
 
 router.param('post', function(req,res,next,id){
+
 	var query= Post.findById(id);
 
 	query.exec(function(error,result){
@@ -85,7 +90,9 @@ router.param('comment', function(req, res, next, id){
 });
 
 router.get('/posts/:post/comments/:comment', function(req, res, next){
+
 	res.json(req.comment);	
+
 });
 
 router.put('/posts/:post/comments/:comment/upvote', function(req, res, next){
