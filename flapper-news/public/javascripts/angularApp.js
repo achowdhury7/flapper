@@ -27,7 +27,7 @@ function($scope, posts, postFactory){
   $scope.posts =postFactory.postList; // binding the service to a 'scope' variable, therefore enabling 2-way binding
   $scope.addPost=function(){
   	if ($scope.title && $scope.title != '') {
-  	$scope.posts.push({
+  	postFactory.create({
       title: $scope.title, 
       link: $scope.link, 
       upvotes: 0,
@@ -36,13 +36,14 @@ function($scope, posts, postFactory){
     });
   	$scope.title='';
   	$scope.link='';
-  }
+    } 
   };
-
   $scope.incrementUpvote= function(post){
-  	post.upvotes+=1;
+  	postFactory.upvote(post);
   }
 }]);
+
+
 
 app.factory('postFactory', ['$http', function($http){
 
@@ -55,8 +56,23 @@ app.factory('postFactory', ['$http', function($http){
       angular.copy(data, obj.postList);
     });
   };
+
+  obj.create= function(){
+    return $http.post('/posts').success(function(data){
+      obj.postList.push(data);
+    });
+  };
+
+  obj.upvote= function(post){
+    return $http.put('/posts/' + post.id + '/upvote').success(function(data){
+       post.upvotes+=1; 
+      });
+    };
+  
   return obj;
 }]);
+
+
 
 app.factory('commentFactory',function(){
 
