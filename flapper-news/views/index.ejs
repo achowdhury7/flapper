@@ -2,9 +2,9 @@
   <head>
     <meta charset="utf-8"/>
     <title>My Angular App!</title>
-    <script src="../public/javascripts/angular.min.js"></script>
-    <script src="../public/javascripts/angularApp.js"></script>
-    <script src="../public/javascripts/angular-ui-router.min.js"></script>
+    <script src="/javascripts/angular.min.js"></script>
+    <script src="/javascripts/angularApp.js"></script>
+    <script src="/javascripts/angular-ui-router.min.js"></script>
     
   </head>
  
@@ -22,7 +22,7 @@
         <a ng-show="post.link" href="{{post.link}}">{{post.title}}</a>
         <span ng-hide="post.link">{{post.title}}</span>
         <span>
-           <a href="#/posts/{{$index}}">Comments</a>
+           <a href="#/posts/{{post._id}}">Comments</a>
         </span>
            {{post.upvotes}} <span ng-click="incrementUpvote(post)">^</span>
       </div>  

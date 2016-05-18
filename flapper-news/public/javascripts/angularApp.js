@@ -16,7 +16,12 @@ app.config(['$stateProvider','$urlRouterProvider',function($stateProvider,$urlRo
     .state('posts',{
       url:'/posts/{id}',
       templateUrl: '/posts.html',
-      controller: 'PostsCtrl'  
+      controller: 'PostsCtrl',
+      resolve: {
+        post: function($stateParams,postFactory){
+          return postFactory.getPost($stateParams.id);
+        }
+      } 
     });
 
   $urlRouterProvider.otherwise('home');
@@ -31,8 +36,7 @@ function($scope, posts, postFactory){
       title: $scope.title, 
       link: $scope.link, 
       upvotes: 0,
-      comments:{}
-
+      comments:[]
     });
   	$scope.title='';
   	$scope.link='';
@@ -57,14 +61,22 @@ app.factory('postFactory', ['$http', function($http){
     });
   };
 
-  obj.create= function(){
-    return $http.post('/posts').success(function(data){
-      obj.postList.push(data);
+  obj.getPost= function(id){
+    return $http.get('/posts/' + id).then(function(response){
+      return response.data;
+    });
+  };
+
+  obj.create= function(data){
+    return $http.post('/posts', data).then(function(post){
+      obj.postList.push(post.data);
+    }, function(post){
+      console.log('Failure to create' + '&nbsp' + post.data);
     });
   };
 
   obj.upvote= function(post){
-    return $http.put('/posts/' + post.id + '/upvote').success(function(data){
+    return $http.put('/posts/' + post._id + '/upvote').success(function(result){
        post.upvotes+=1; 
       });
     };
@@ -86,12 +98,13 @@ app.factory('commentFactory',function(){
 
 app.controller('PostsCtrl',[
   '$scope',
-  'postFactory',  
+  'postFactory', 
+  'post',   
   'commentFactory',
   '$stateParams',
-  function($scope,postFactory,commentFactory,$stateParams)
+  function($scope,postFactory,post,commentFactory,$stateParams)
 {
-  $scope.post= postFactory.postList[$stateParams.id];
+  $scope.post= post;
   $scope.post.comments= commentFactory.commentList;
   $scope.addComment = function(){
     if ($scope.body && $scope.body != '') {

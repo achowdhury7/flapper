@@ -23,7 +23,10 @@ router.post('/posts',function(req, res, next){
 	var post= new Post(req.body);	
 	console.log(req.body);
 	post.save(function(err, post){
-		if (err) {next(err)};
+		if (err) {
+			console.log('POST request failed'); 
+			next(err);
+		};
 
 		res.json(post);
 	});
@@ -53,7 +56,6 @@ router.get('/posts/:post',function(req,res,next){
 router.put('/posts/:post/upvote', function(req, res, next){
 	req.post.upvote(function(err, result){
 		if (err) {next(err);};
-
 		res.json(result);
 	});
 });
