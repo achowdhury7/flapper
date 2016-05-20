@@ -19,8 +19,12 @@ app.config(['$stateProvider','$urlRouterProvider',function($stateProvider,$urlRo
       controller: 'PostsCtrl',
       resolve: {
         post: function($stateParams,postFactory){
-          return postFactory.getPost($stateParams.id);
-        }
+          return postFactory.getPost($stateParams.id); //$stateparams.id takes reference of the url parameter
+        },
+      
+        comments: function($stateParams,commentFactory){
+          return commentFactory.getComments($stateParams.id);
+        } 
       } 
     });
 
@@ -49,13 +53,13 @@ function($scope, posts, postFactory){
 
 
 
-app.factory('postFactory', ['$http', function($http){
+app.factory('postFactory', ['$http', function($http){ // model
 
-  var obj= {
+  var obj= {                                          // value-object layer
     postList:[]
   };
 
-  obj.getAll= function(){
+  obj.getAll= function(){                             // service layer & data access layer rolled into one
     return $http.get('/posts').success(function(data){
       angular.copy(data, obj.postList);
     });
@@ -86,13 +90,23 @@ app.factory('postFactory', ['$http', function($http){
 
 
 
-app.factory('commentFactory',function(){
+app.factory('commentFactory',['$http', function($http){
 
   var obj= {
     commentList:[]
   };
+
+  obj.getComments= function(postId){
+    return $http.get('/posts/' + postId + '/comments').then(function(response){
+      angular.copy(response.data, obj.commentList);
+    },
+    function(response){
+      console.log('Can\'t retrieve comments : ' + response.data);      
+    });
+  };
+
   return obj;
-});
+}]);
 
 
 
@@ -100,9 +114,8 @@ app.controller('PostsCtrl',[
   '$scope',
   'postFactory', 
   'post',   
-  'commentFactory',
-  '$stateParams',
-  function($scope,postFactory,post,commentFactory,$stateParams)
+  'commentFactory',    
+  function($scope,postFactory,post,commentFactory)
 {
   $scope.post= post;
   $scope.post.comments= commentFactory.commentList;
