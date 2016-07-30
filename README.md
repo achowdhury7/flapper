@@ -1,3 +1,3 @@
 # flapper
 
-Tutorial app using MEAN stack
+News Posting App built using the MEAN stack
